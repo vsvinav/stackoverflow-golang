@@ -122,6 +122,9 @@ func connectToDatabase() {
 // }
 
 func main() {
+
 	getConnection()
 	connectToDatabase()
+	parseBadges()
+
 }

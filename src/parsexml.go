@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
-func ParseBadges() {
+func parseBadges() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Badges.xml")
@@ -17,10 +19,16 @@ func ParseBadges() {
 	fmt.Println("Successfully Opened Badges.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
 	defer xmlFile.Close()
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var b badges
+	xml.Unmarshal(byteValue, &b)
+	for i := 0; i < len(b.badges); i++ {
+		fmt.Println(b.badges)
+	}
 
 }
 
-func ParseComments() {
+func parseComments() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Comments.xml")
@@ -34,7 +42,7 @@ func ParseComments() {
 	defer xmlFile.Close()
 
 }
-func ParsePostHistory() {
+func parsePostHistory() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("PostHistory.xml")
@@ -48,7 +56,7 @@ func ParsePostHistory() {
 	defer xmlFile.Close()
 
 }
-func ParsePostLinks() {
+func parsePostLinks() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("PostLinks.xml")
@@ -62,7 +70,7 @@ func ParsePostLinks() {
 	defer xmlFile.Close()
 
 }
-func ParsePosts() {
+func parsePosts() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Posts.xml")
@@ -77,7 +85,7 @@ func ParsePosts() {
 
 }
 
-func ParseTags() {
+func parseTags() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Tags.xml")
@@ -92,7 +100,7 @@ func ParseTags() {
 
 }
 
-func ParseUsers() {
+func parseUsers() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Users.xml")
@@ -107,7 +115,7 @@ func ParseUsers() {
 
 }
 
-func ParseVotes() {
+func parseVotes() {
 
 	// Open our xmlFile
 	xmlFile, err := os.Open("Votes.xml")
