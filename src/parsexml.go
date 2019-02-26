@@ -83,7 +83,6 @@ func parsePostLinks() {
 	var plink Postlinks
 	fmt.Println(plink)
 	xml.Unmarshal(byteValue, &plink)
-	fmt.Printf("%+v", plink)
 	for i := 0; i < len(plink.Postlinks); i++ {
 		addPostLinks(plink.Postlinks[i])
 	}
@@ -101,6 +100,12 @@ func parsePosts() {
 
 	fmt.Println("Successfully Opened Posts.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var posts Posts
+	xml.Unmarshal(byteValue, &posts)
+	for i := 0; i < len(posts.Posts); i++ {
+		addPosts(posts.Posts[i])
+	}
 	defer xmlFile.Close()
 
 }
@@ -116,6 +121,12 @@ func parseTags() {
 
 	fmt.Println("Successfully Opened Tags.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var tags Tags
+	xml.Unmarshal(byteValue, &tags)
+	for i := 0; i < len(tags.Tags); i++ {
+		addTags(tags.Tags[i])
+	}
 	defer xmlFile.Close()
 
 }
@@ -131,6 +142,12 @@ func parseUsers() {
 
 	fmt.Println("Successfully Opened users.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var users Users
+	xml.Unmarshal(byteValue, &users)
+	for i := 0; i < len(users.Users); i++ {
+		addUsers(users.Users[i])
+	}
 	defer xmlFile.Close()
 
 }
@@ -146,6 +163,12 @@ func parseVotes() {
 
 	fmt.Println("Successfully Opened Votes.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var votes Votes
+	xml.Unmarshal(byteValue, &votes)
+	for i := 0; i < len(votes.Votes); i++ {
+		addVotes(votes.Votes[i])
+	}
 	defer xmlFile.Close()
 
 }

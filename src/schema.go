@@ -65,18 +65,75 @@ type Posts struct {
 }
 
 type Post struct {
-	ID               int    `xml:"Id,attr"`
-	PostTypeID       int    `xml:"PostTypeId,attr"`
-	CreationDate     string `xml:"CreationDate,attr"`
-	Score            int    `xml:"Score,attr"`
-	ViewCount        int    `xml:"ViewCount,attr"`
-	Body             string `xml:"Body,attr"`
-	OwnerUserID      int    `xml:"OwnerUserId,attr"`
-	LastActivityDate string `xml:"LastActivityDate,attr"`
-	Title            string `xml:"Title,attr"`
-	Tags             string `xml:"Tags,attr"`
-	AnswerCount      int    `xml:"AnswerCount,attr"`
-	CommentCount     int    `xml:"CommentCount,attr"`
-	FavoriteCount    int    `xml:"FavoriteCount,attr"`
-	ClosedDate       string `xml:"ClosedDate,attr"`
+	ID                    int    `xml:"Id,attr"`
+	PostTypeID            int    `xml:"PostTypeId,attr"`
+	ParentID              int    `xml:"ParentId,attr"`
+	AcceptedAnswerID      int    `xml:"AcceptedAnswerId,attr"`
+	CreationDate          string `xml:"CreationDate,attr"`
+	Score                 int    `xml:"Score,attr"`
+	ViewCount             int    `xml:"ViewCount,attr"`
+	Body                  string `xml:"Body,attr"`
+	OwnerUserID           int    `xml:"OwnerUserId,attr"`
+	OwnerDisplayName      string `xml:"OwnerDisplayName,attr"`
+	LastEditorUserID      int    `xml:"LastEditorUserId,attr"`
+	LastEditDate          string `xml:"LastEditDate,attr"`
+	LastActivityDate      string `xml:"LastActivityDate,attr"`
+	LastEditorDisplayName string `xml:"LastEditorDisplayName,attr"`
+	Title                 string `xml:"Title,attr"`
+	Tags                  string `xml:"Tags,attr"`
+	AnswerCount           int    `xml:"AnswerCount,attr"`
+	CommentCount          int    `xml:"CommentCount,attr"`
+	FavoriteCount         int    `xml:"FavoriteCount,attr"`
+	ClosedDate            string `xml:"ClosedDate,attr"`
+	CommunityOwnedDate    string `xml:"CommunityOwnedDate,attr"`
+}
+
+// *******Tags structure
+
+type Tags struct {
+	Tags []Tag `xml:"row"`
+}
+
+type Tag struct {
+	ID            int64  `xml:"Id,attr"`
+	TagName       string `xml:"TagName,attr"`
+	Count         int    `xml:"Count,attr"`
+	ExcerptPostID int    `xml:"ExcerptPostId,attr"`
+	WikiPostID    int    `xml:"WikiPostId,attr"`
+}
+
+// *******Users structure
+type Users struct {
+	Users []User `xml:"row"`
+}
+
+type User struct {
+	ID              int64  `xml:"Id,attr"`
+	Reputation      int64  `xml:"Reputation,attr"`
+	CreationDate    string `xml:"CreationDate,attr"`
+	DisplayName     string `xml:"DisplayName,attr"`
+	LastAccessDate  string `xml:"LastAccessDate,attr"`
+	WebsiteURL      string `xml:"WebsiteUrl,attr"`
+	Location        string `xml:"Location,attr"`
+	AboutMe         string `xml:"AboutMe,attr"`
+	Views           int    `xml:"Views,attr"`
+	UpVotes         int    `xml:"UpVotes,attr"`
+	DownVotes       int    `xml:"DownVotes,attr"`
+	AccountID       int    `xml:"AccountId,attr"`
+	ProfileImageURL string `xml:"ProfileImageUrl,attr"`
+}
+
+// *******Votes structure
+
+type Votes struct {
+	Votes []Vote `xml:"row"`
+}
+
+type Vote struct {
+	ID           int    `xml:"Id,attr"`
+	PostID       int    `xml:"PostId,attr"`
+	CreationDate string `xml:"CreationDate,attr"`
+	VoteTypeID   int    `xml:"VoteTypeId,attr"`
+	UserID       int    `xml:"UserId,attr"`
+	BountyAmount int    `xml:"BountyAmount,attr"`
 }
