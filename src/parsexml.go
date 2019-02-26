@@ -20,10 +20,10 @@ func parseBadges() {
 	// defer the closing of our xmlFile so that we can parse it later on
 	defer xmlFile.Close()
 	byteValue, _ := ioutil.ReadAll(xmlFile)
-	var b badges
+	var b Badges
 	xml.Unmarshal(byteValue, &b)
-	for i := 0; i < len(b.badges); i++ {
-		fmt.Println(b.badges)
+	for i := 0; i < len(b.Badges); i++ {
+		fmt.Println(b.Badges[i])
 	}
 
 }
@@ -40,6 +40,9 @@ func parseComments() {
 	fmt.Println("Successfully Opened Comments.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
 	defer xmlFile.Close()
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var c Comments
+	xml.Unmarshal(byteValue, &c)
 
 }
 func parsePostHistory() {
@@ -54,6 +57,12 @@ func parsePostHistory() {
 	fmt.Println("Successfully Opened PostHistory.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
 	defer xmlFile.Close()
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var ph Posthistory
+	xml.Unmarshal(byteValue, &ph)
+	for i := 0; i < len(ph.Posthistory); i++ {
+		fmt.Println(ph.Posthistory[i])
+	}
 
 }
 func parsePostLinks() {
@@ -67,6 +76,14 @@ func parsePostLinks() {
 
 	fmt.Println("Successfully Opened PostLinks.xml")
 	// defer the closing of our xmlFile so that we can parse it later on
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var plink Postlinks
+	fmt.Println(plink)
+	xml.Unmarshal(byteValue, &plink)
+	fmt.Printf("%+v", plink)
+	for i := 0; i < len(plink.Postlinks); i++ {
+		fmt.Println(plink.Postlinks[i])
+	}
 	defer xmlFile.Close()
 
 }

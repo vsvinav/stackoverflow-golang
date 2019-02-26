@@ -126,5 +126,7 @@ func main() {
 	getConnection()
 	connectToDatabase()
 	parseBadges()
-
+	// parseComments()
+	// parsePostHistory()
+	// parsePostLinks()
 }
