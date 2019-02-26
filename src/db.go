@@ -47,6 +47,16 @@ func connectToDatabase() {
 	fmt.Println("Successfully connected!")
 }
 
+// func deleteAllUsers() {
+// 	db := getConnection()
+// 	defer db.Close()
+// 	sqlStatement := `DELETE FROM users`
+// 	_, err := db.Exec(sqlStatement)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// }
+
 func addBadge(badge Badge) {
 	db := getConnection()
 	defer db.Close()
@@ -164,7 +174,7 @@ VALUES ($1, $2, $3, $4, $5, $6)`
 }
 
 func getPosts() []Post {
-	var post []Post
+	var posts []Post
 	db := getConnection()
 	defer db.Close()
 
@@ -188,43 +198,88 @@ func getPosts() []Post {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Users in the database:", posts)
+	// fmt.Println("Users in the database:", posts)
 	return posts
 }
 
-// func deleteAllUsers() {
-// 	db := getConnection()
-// 	defer db.Close()
-// 	sqlStatement := `DELETE FROM users`
-// 	_, err := db.Exec(sqlStatement)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
+func getPost(postID int) Post {
+	db := getConnection()
+	defer db.Close()
 
-// func getUser(userID int32) User {
-// 	db := getConnection()
-// 	defer db.Close()
+	var post Post
+	sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1`
+	row := db.QueryRow(sqlStatement, postID)
+	err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		return Post{}
+	case nil:
+		// fmt.Println(post)
+	default:
+		panic(err)
+	}
+	return post
+}
 
-// 	var user User
-// 	sqlStatement := `SELECT ID, age, email, first_name, last_name FROM users WHERE ID=$1`
-// 	row := db.QueryRow(sqlStatement, userID)
-// 	err := row.Scan(&user.ID, &user.Age, &user.FirstName, &user.LastName, &user.Email)
-// 	switch err {
-// 	case sql.ErrNoRows:
-// 		fmt.Println("No rows were returned!")
-// 		return User{}
-// 	case nil:
-// 		fmt.Println(user)
-// 	default:
-// 		panic(err)
-// 	}
-// 	return user
-// }
+// ************* Get Comments for the post
+
+func getComments() []Comment {
+	var comments []Comment
+	db := getConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM comments")
+	if err != nil {
+		// handle this error better than this
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		comment := Comment{}
+		err = rows.Scan(&comment.ID, &comment.PostID, &comment.Score, &comment.Text, &comment.CreationDate, &comment.UserID)
+		if err != nil {
+			// handle this error
+			panic(err)
+		}
+		comments = append(comments, comment)
+	}
+	// get any error encountered during iteration
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	return comments
+}
+
+func getComment(postID int) Comment {
+	db := getConnection()
+	defer db.Close()
+
+	var comment Comment
+	sqlStatement := `SELECT * FROM comments where post_id = $1`
+	row := db.QueryRow(sqlStatement, postID)
+	err := row.Scan(&comment.ID, &comment.PostID, &comment.Score, &comment.Text, &comment.CreationDate, &comment.UserID)
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		return Comment{}
+	case nil:
+		fmt.Println(comment)
+	default:
+		panic(err)
+	}
+	return comment
+}
 
 func main() {
 
 	getConnection()
 	connectToDatabase()
-	parseVotes()
+	// // Milestone 2 Q1:
+	posts := getPosts()
+	fmt.Println(getPost(posts[0].ID))
+	// Milestone 2 Q2:
+	comments := getComments()
+	fmt.Println(getPost(comments[6].PostID))
 }

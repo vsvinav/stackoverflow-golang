@@ -5,11 +5,11 @@ type Badges struct {
 }
 
 type Badge struct {
-	ID       int64  `xml:"Id,attr"`
-	UserID   int64  `xml:"UserId,attr"`
+	ID       int    `xml:"Id,attr"`
+	UserID   int    `xml:"UserId,attr"`
 	Name     string `xml:"Name,attr"`
 	Date     string `xml:"Date,attr"`
-	Class    int64  `xml:"Class,attr"`
+	Class    int    `xml:"Class,attr"`
 	TagBased bool   `xml:"TagBased,attr"`
 }
 
@@ -20,12 +20,12 @@ type Comments struct {
 }
 
 type Comment struct {
-	ID           int64  `xml:"Id,attr"`
-	PostID       int64  `xml:"PostId,attr"`
+	ID           int    `xml:"Id,attr"`
+	PostID       int    `xml:"PostId,attr"`
 	Score        int    `xml:"Score,attr"`
 	Text         string `xml:"Text,attr"`
 	CreationDate string `xml:"CreationDate,attr"`
-	UserID       int64  `xml:"UserId,attr"`
+	UserID       int    `xml:"UserId,attr"`
 }
 
 //********** Post History Structure
@@ -35,12 +35,12 @@ type Posthistory struct {
 }
 
 type Posthist struct {
-	ID                int64  `xml:"Id,attr"`
-	PostHistoryTypeID int64  `xml:"PostHistoryTypeId,attr"`
+	ID                int    `xml:"Id,attr"`
+	PostHistoryTypeID int    `xml:"PostHistoryTypeId,attr"`
 	PostID            int    `xml:"PostId,attr"`
 	RevisionGUID      string `xml:"RevisionGUID,attr"`
 	CreationDate      string `xml:"CreationDate,attr"`
-	UserID            int64  `xml:"UserId,attr"`
+	UserID            int    `xml:"UserId,attr"`
 	Text              string `xml:"Text,attr"`
 	Comment           string `xml:"Comment,attr"`
 }
@@ -95,7 +95,7 @@ type Tags struct {
 }
 
 type Tag struct {
-	ID            int64  `xml:"Id,attr"`
+	ID            int    `xml:"Id,attr"`
 	TagName       string `xml:"TagName,attr"`
 	Count         int    `xml:"Count,attr"`
 	ExcerptPostID int    `xml:"ExcerptPostId,attr"`
@@ -108,8 +108,8 @@ type Users struct {
 }
 
 type User struct {
-	ID              int64  `xml:"Id,attr"`
-	Reputation      int64  `xml:"Reputation,attr"`
+	ID              int    `xml:"Id,attr"`
+	Reputation      int    `xml:"Reputation,attr"`
 	CreationDate    string `xml:"CreationDate,attr"`
 	DisplayName     string `xml:"DisplayName,attr"`
 	LastAccessDate  string `xml:"LastAccessDate,attr"`
