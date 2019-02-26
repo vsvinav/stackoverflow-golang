@@ -63,17 +63,21 @@ func main() {
 	getConnection()
 	connectToDatabase()
 	// // Milestone 2 Q1:
-	posts := getPosts()
+	// posts := getPosts()
 	// fmt.Println(getPost(posts[0].ID))
 	// Milestone 2 Q2:
 	// comments := getComments()
 	// fmt.Println(getPost(comments[6].PostID))
 	// Milestone 2 Q3:
-	fmt.Println(getAnswer(posts[5].ID, "score"))
+	// fmt.Println(getAnswer(posts[5].ID, "score"))
 	// fmt.Println(getAnswer(posts[5].ID, "creation date"))
 	// fmt.Println(getAnswer(posts[5].ID, "last activity date"))
 	//Milestone 2 Q4:
-	users := getUsers()
-	fmt.Println(getUser(users[10].ID))
+	// users := getUsers()
+	// fmt.Println(getUser(users[10].ID))
+	// fmt.Println(upvote(posts[0].ID))
+	// fmt.Println(getPost(posts[1].ID))
+	// fmt.Println(downvote(posts[1].ID))
+	addCustomer(takeCustomerInput())
 
 }

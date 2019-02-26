@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 func addBadge(badge Badge) {
 	db := getConnection()
@@ -116,4 +119,33 @@ VALUES ($1, $2, $3, $4, $5, $6)`
 	}
 	fmt.Println(vote.ID)
 
+}
+
+func addCustomer(customer Customer) {
+	db := getConnection()
+	defer db.Close()
+
+	sqlStatement := `
+INSERT INTO customer(id, username, password, email)
+VALUES ($1, $2, $3, $4)`
+	_, err := db.Exec(sqlStatement, customer.ID, customer.username, customer.password, customer.email)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
+func takeCustomerInput() Customer {
+	var customer Customer
+	fmt.Println("Enter id:")
+	fmt.Scan(&customer.ID)
+	fmt.Println("Enter username:")
+	var re = regexp.MustCompile(`(?m)^\w{5,}$`)
+
+	fmt.Scanln(&customer.username)
+	fmt.Println("Enter Password:")
+	fmt.Scanln(&customer.password)
+	fmt.Println("Enter email")
+	fmt.Scanln(&customer.email)
+	return customer
 }

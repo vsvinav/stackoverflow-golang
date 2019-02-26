@@ -137,3 +137,12 @@ type Vote struct {
 	UserID       int    `xml:"UserId,attr"`
 	BountyAmount int    `xml:"BountyAmount,attr"`
 }
+
+// *********Customer Structure
+
+type Customer struct {
+	ID       int
+	username string
+	password string
+	email    string
+}
