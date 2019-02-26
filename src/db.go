@@ -198,7 +198,7 @@ func getPosts() []Post {
 	if err != nil {
 		panic(err)
 	}
-	// fmt.Println("Users in the database:", posts)
+	// fmt.Println("Posts in the database:", posts)
 	return posts
 }
 
@@ -272,14 +272,113 @@ func getComment(postID int) Comment {
 	return comment
 }
 
+// ************* Get Answers for the post, sorting according to user's choice
+
+func getAnswers() []Post {
+	var posts []Post
+	db := getConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title, body FROM posts")
+	if err != nil {
+		// handle this error better than this
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		post := Post{}
+		err = rows.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title, &post.Body)
+		if err != nil {
+			// handle this error
+			panic(err)
+		}
+		posts = append(posts, post)
+	}
+	// get any error encountered during iteration
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	// fmt.Println("Posts in the database:", posts)
+	return posts
+}
+
+func getAnswer(postID int, choice string) Post {
+	db := getConnection()
+	defer db.Close()
+
+	var post Post
+	if choice == "score" {
+		sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1 order by score`
+		row := db.QueryRow(sqlStatement, postID)
+		err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+		switch err {
+		case sql.ErrNoRows:
+			fmt.Println("No rows were returned!")
+			return Post{}
+		case nil:
+			fmt.Println(post)
+		default:
+			panic(err)
+		}
+		return post
+	} else if choice == "creation date" {
+		sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1 order by creation_date`
+		row := db.QueryRow(sqlStatement, postID)
+		err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+		switch err {
+		case sql.ErrNoRows:
+			fmt.Println("No rows were returned!")
+			return Post{}
+		case nil:
+			fmt.Println(post)
+		default:
+			panic(err)
+		}
+		return post
+	} else if choice == "last activity date" {
+		sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1 order by last_activity_date`
+		row := db.QueryRow(sqlStatement, postID)
+		err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+		switch err {
+		case sql.ErrNoRows:
+			fmt.Println("No rows were returned!")
+			return Post{}
+		case nil:
+			fmt.Println(post)
+		default:
+			panic(err)
+		}
+		return post
+	} else {
+		sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1`
+		row := db.QueryRow(sqlStatement, postID)
+		err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+		switch err {
+		case sql.ErrNoRows:
+			fmt.Println("No rows were returned!")
+			return Post{}
+		case nil:
+			fmt.Println(post)
+		default:
+			panic(err)
+		}
+		return post
+	}
+}
+
 func main() {
 
 	getConnection()
 	connectToDatabase()
 	// // Milestone 2 Q1:
 	posts := getPosts()
-	fmt.Println(getPost(posts[0].ID))
+	// fmt.Println(getPost(posts[0].ID))
 	// Milestone 2 Q2:
-	comments := getComments()
-	fmt.Println(getPost(comments[6].PostID))
+	// comments := getComments()
+	// fmt.Println(getPost(comments[6].PostID))
+	// Milestone 2 Q3:
+	fmt.Println(getAnswer(posts[5].ID, "score"))
+	fmt.Println(getAnswer(posts[5].ID, "creation date"))
+	fmt.Println(getAnswer(posts[5].ID, "last activity date"))
 }
