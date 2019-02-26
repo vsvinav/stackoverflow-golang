@@ -12,7 +12,7 @@ const (
 	port           = 5432
 	dbUser         = "user12"
 	dbUserPassword = "postgres"
-	dbname         = "overflow"
+	dbname         = "overflow2"
 )
 
 func getConnection() *sql.DB {
@@ -47,20 +47,64 @@ func connectToDatabase() {
 	fmt.Println("Successfully connected!")
 }
 
-// func addUser(user User) {
-// 	db := getConnection()
-// 	defer db.Close()
+func addBadge(badge Badge) {
+	db := getConnection()
+	defer db.Close()
 
-// 	sqlStatement := `
-// INSERT INTO users (age, email, first_name, last_name)
-// VALUES ($1, $2, $3, $4)`
-// 	_, err := db.Exec(sqlStatement, user.Age, user.Email, user.FirstName, user.LastName)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	sqlStatement := `
+INSERT INTO badges (id, user_id, name, date, class, tagbased)
+VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := db.Exec(sqlStatement, badge.ID, badge.UserID, badge.Name, badge.Date, badge.Class, badge.TagBased)
+	if err != nil {
+		panic(err)
+	}
 
-// 	fmt.Println("Added user to database", user)
-// }
+	fmt.Println("Added badge to database", badge)
+}
+
+func addComment(comment Comment) {
+	db := getConnection()
+	defer db.Close()
+
+	sqlStatement := `
+INSERT INTO comments (id, post_id, score, text, creation_date, user_id)
+VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := db.Exec(sqlStatement, comment.ID, comment.PostID, comment.Score, comment.Text, comment.CreationDate, comment.UserID)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
+func addPostHistory(posthist Posthist) {
+	db := getConnection()
+	defer db.Close()
+
+	sqlStatement := `
+INSERT INTO post_history (id, post_history_type_id, post_id, revision_guid, creation_date, user_id, text, comment)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err := db.Exec(sqlStatement, posthist.ID, posthist.PostHistoryTypeID, posthist.PostID, posthist.RevisionGUID, posthist.CreationDate, posthist.UserID, posthist.Text, posthist.Comment)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(posthist.ID)
+
+}
+
+func addPostLinks(postlink Postlink) {
+	db := getConnection()
+	defer db.Close()
+
+	sqlStatement := `
+INSERT INTO post_link (id, creation_date, post_id, related_post_id, link_type_id)
+VALUES ($1, $2, $3, $4, $5)`
+	_, err := db.Exec(sqlStatement, postlink.ID, postlink.CreationDate, postlink.PostID, postlink.RelatedPostID, postlink.LinkTypeID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(postlink.ID)
+
+}
 
 // func getUsers() []User {
 // 	var users []User
@@ -125,8 +169,5 @@ func main() {
 
 	getConnection()
 	connectToDatabase()
-	parseBadges()
-	// parseComments()
-	// parsePostHistory()
-	// parsePostLinks()
+
 }

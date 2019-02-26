@@ -23,7 +23,7 @@ func parseBadges() {
 	var b Badges
 	xml.Unmarshal(byteValue, &b)
 	for i := 0; i < len(b.Badges); i++ {
-		fmt.Println(b.Badges[i])
+		addBadge(b.Badges[i])
 	}
 
 }
@@ -43,6 +43,9 @@ func parseComments() {
 	byteValue, _ := ioutil.ReadAll(xmlFile)
 	var c Comments
 	xml.Unmarshal(byteValue, &c)
+	for i := 0; i < len(c.Comments); i++ {
+		addComment(c.Comments[i])
+	}
 
 }
 func parsePostHistory() {
@@ -61,7 +64,7 @@ func parsePostHistory() {
 	var ph Posthistory
 	xml.Unmarshal(byteValue, &ph)
 	for i := 0; i < len(ph.Posthistory); i++ {
-		fmt.Println(ph.Posthistory[i])
+		addPostHistory(ph.Posthistory[i])
 	}
 
 }
@@ -82,7 +85,7 @@ func parsePostLinks() {
 	xml.Unmarshal(byteValue, &plink)
 	fmt.Printf("%+v", plink)
 	for i := 0; i < len(plink.Postlinks); i++ {
-		fmt.Println(plink.Postlinks[i])
+		addPostLinks(plink.Postlinks[i])
 	}
 	defer xmlFile.Close()
 
