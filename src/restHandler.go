@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
 )
 
@@ -20,8 +21,8 @@ func Api() {
 	router.HandleFunc("/answers", GetAnswersJSON).Methods("GET")
 	router.HandleFunc("/upvote/{id}", UpvoteJSON).Methods("PUT")
 	router.HandleFunc("/downvote/{id}", DownvoteJSON).Methods("PUT")
-	// http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
-	http.Handle("/", router)
+	http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
+	// http.Handle("/", router)
 
 	err := http.ListenAndServe(":8000", router)
 	if err != nil {
