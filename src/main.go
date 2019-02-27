@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 func main() {
 
 	// getConnection()
@@ -22,10 +20,10 @@ func main() {
 
 	// fmt.Println(upvote(20))
 	// fmt.Println(downvote(20))
-	fmt.Println(GetPost(20))
+	// fmt.Println(GetPost(20))
 	// fmt.Println(getPost(posts[1].ID))
 	// fmt.Println(downvote(posts[1].ID))
-	// addCustomer(takeCustomerInput())
-	Api()
+	AddCustomer(TakeCustomerInput())
+	// Api()
 	// fmt.Println(getPosts())
 }

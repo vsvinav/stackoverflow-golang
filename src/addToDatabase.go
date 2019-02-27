@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 )
 
 func addBadge(badge Badge) {
@@ -120,31 +121,58 @@ VALUES ($1, $2, $3, $4, $5, $6)`
 
 }
 
-func addCustomer(customer Customer) {
-	db := getConnection()
-	defer db.Close()
+func AddCustomer(customer Customer) {
+	if ValidateCustomer(customer) {
+		db := getConnection()
+		defer db.Close()
 
-	sqlStatement := `
-INSERT INTO customer(id, username, password, email)
-VALUES ($1, $2, $3, $4)`
-	_, err := db.Exec(sqlStatement, customer.ID, customer.username, customer.password, customer.email)
-	if err != nil {
-		panic(err)
+		sqlStatement := `
+			INSERT INTO customer(id, username, password, email)
+			VALUES ($1, $2, $3, $4)`
+		_, err := db.Exec(sqlStatement, customer.ID, customer.Username, customer.Password, customer.Email)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fmt.Println("error in adding to db")
 	}
 
 }
 
-func takeCustomerInput() Customer {
+func ValidateUsername(username string) bool {
+	if len(username) > 5 {
+		return true
+	}
+	return false
+}
+func ValidatePassword(password string) bool {
+	if len(password) > 8 {
+		return true
+	}
+	return false
+}
+func ValidateEmail(email string) bool {
+	var re = regexp.MustCompile(`^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$`)
+	return re.MatchString(email)
+}
+func ValidateCustomer(customer Customer) bool {
+	if ValidateUsername(customer.Username) && ValidateEmail(customer.Email) && ValidatePassword(customer.Password) {
+		return true
+	}
+	return false
+}
+func TakeCustomerInput() Customer {
 	var customer Customer
 	fmt.Println("Enter id:")
 	fmt.Scan(&customer.ID)
 	fmt.Println("Enter username:")
 	// var re = regexp.MustCompile(`(?m)^\w{5,}$`)
 
-	fmt.Scanln(&customer.username)
+	fmt.Scanln(&customer.Username)
 	fmt.Println("Enter Password:")
-	fmt.Scanln(&customer.password)
+	fmt.Scanln(&customer.Password)
 	fmt.Println("Enter email")
-	fmt.Scanln(&customer.email)
+	fmt.Scanln(&customer.Email)
 	return customer
+
 }

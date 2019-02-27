@@ -142,7 +142,7 @@ type Vote struct {
 
 type Customer struct {
 	ID       int
-	username string
-	password string
-	email    string
+	Username string
+	Password string
+	Email    string
 }

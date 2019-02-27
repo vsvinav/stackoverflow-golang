@@ -59,3 +59,7 @@ func TestForGetPost(t *testing.T) {
 	}
 
 }
+
+func TestCustomerUserName(t *testing.T) {
+	var cust Customer = 
+}

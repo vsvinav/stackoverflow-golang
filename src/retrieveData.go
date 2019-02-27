@@ -305,7 +305,7 @@ func GetCustomers() []Customer {
 	defer rows.Close()
 	for rows.Next() {
 		customer := Customer{}
-		err = rows.Scan(&customer.ID, &customer.username, &customer.password, &customer.email)
+		err = rows.Scan(&customer.ID, &customer.Username, &customer.Password, &customer.Email)
 		if err != nil {
 			// handle this error
 			panic(err)
@@ -327,7 +327,7 @@ func GetCustomer(customerID int) Customer {
 	var customer Customer
 	sqlStatement := `SELECT *  FROM customer where id = $1`
 	row := db.QueryRow(sqlStatement, customerID)
-	err := row.Scan(&customer.ID, &customer.username, &customer.password, &customer.email)
+	err := row.Scan(&customer.ID, &customer.Username, &customer.Password, &customer.Email)
 	switch err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
