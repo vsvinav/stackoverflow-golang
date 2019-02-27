@@ -1,11 +1,13 @@
 package main
 
 import (
+	"crypto/subtle"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
 )
 
@@ -20,10 +22,8 @@ func Api() {
 	router.HandleFunc("/answers", GetAnswers).Methods("GET")
 	router.HandleFunc("/upvote/{id}", Upvote).Methods("PUT")
 	router.HandleFunc("/downvote/{id}", Downvote).Methods("PUT")
-
-	// router.HandleFunc("/users/{id}", GetUser).Methods("GET")
-	http.Handle("/", router)
-	fmt.Println("Listening on port 8000")
+	http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
+	// http.Handle("/", router)
 
 	err := http.ListenAndServe(":8000", router)
 	if err != nil {
@@ -32,7 +32,7 @@ func Api() {
 }
 
 func PrintHello(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Fprintf(w, "Hello")
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
@@ -117,46 +117,19 @@ func Downvote(w http.ResponseWriter, req *http.Request) {
 
 }
 
-// func BasicAuth(pass handler) handler {
+func BasicAuth(handler http.HandlerFunc, username, password, realm string) http.HandlerFunc {
 
-// 	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-// 		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+		user, pass, ok := r.BasicAuth()
 
-// 		if len(auth) != 2 || auth[0] != "Basic" {
-// 			http.Error(w, "authorization failed", http.StatusUnauthorized)
-// 			return
-// 		}
+		if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(username)) != 1 || subtle.ConstantTimeCompare([]byte(pass), []byte(password)) != 1 {
+			w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`"`)
+			w.WriteHeader(401)
+			w.Write([]byte("Unauthorised.\n"))
+			return
+		}
 
-// 		payload, _ := base64.StdEncoding.DecodeString(auth[1])
-// 		pair := strings.SplitN(string(payload), ":", 2)
-
-// 		if len(pair) != 2 || !validate(pair[0], pair[1]) {
-// 			http.Error(w, "authorization failed", http.StatusUnauthorized)
-// 			return
-// 		}
-
-// 		pass(w, r)
-// 	}
-// }
-
-// func validate(username, password string) bool {
-// 	if username == "test" && password == "test" {
-// 		return true
-// 	}
-// 	return false
-// }
-
-// func GetPost(w http.ResponseWriter, r *http.Request) {
-// 	var posts []Post
-// 	params := mux.Vars(r)
-// 	for _, item := range posts {
-
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			return
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(&Post{})
-
-// }
+		handler(w, r)
+	}
+}
