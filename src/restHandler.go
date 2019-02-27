@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -128,6 +130,22 @@ func DownvoteJSON(w http.ResponseWriter, req *http.Request) {
 
 func GetUnAnsweredJSON(w http.ResponseWriter, r *http.Request) {
 	unanswered := GetUnAnswered()
-	json.NewEncoder(w).Encode(unanswered)
+	unansweredJSON, err := json.Marshal(unanswered)
+	if err != nil {
+		log.Fatal("Cannot encode to JSON ", err)
+	}
+	err = ioutil.WriteFile("unanswered.json", unansweredJSON, 0644)
+	// fmt.Fprintf(os.Stdout, "%s", unansweredJSON)
+
+	// for i:=0; i< len(unanswered); i++ {
+	// var jsonBlob = []byte(unanswered[i])
+
+	// }
+	// err := ioutil.WriteFile("unanswered.json", []byte(unanswered), 0755)
+	// if err != nil {
+	// 	fmt.Printf("Unable to write file: %v", err)
+	// }
+	x := json.NewEncoder(w).Encode(unanswered)
+	fmt.Printf("%T", x)
 
 }
