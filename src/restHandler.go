@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -21,6 +23,11 @@ func Api() {
 	router.HandleFunc("/answers", GetAnswersJSON).Methods("GET")
 	router.HandleFunc("/upvote/{id}", UpvoteJSON).Methods("PUT")
 	router.HandleFunc("/downvote/{id}", DownvoteJSON).Methods("PUT")
+	router.HandleFunc("/unanswered", GetUnAnsweredJSON).Methods("GET")
+	router.HandleFunc("/customer", AddCustomerJSON).Methods("POST")
+
+	router.HandleFunc("/customer", GetCustomersJSON).Methods("GET")
+
 	http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
 	// http.Handle("/", router)
 
@@ -30,6 +37,13 @@ func Api() {
 	}
 	fmt.Println("listening on port 8000")
 }
+
+// func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+// 	rr := httptest.NewRecorder()
+// 	router.ServeHTTP(rr, req)
+
+// 	return rr
+// }
 
 func PrintHello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello")
@@ -115,4 +129,43 @@ func DownvoteJSON(w http.ResponseWriter, req *http.Request) {
 	post := GetPost(id)
 	json.NewEncoder(w).Encode(post)
 
+}
+
+func GetUnAnsweredJSON(w http.ResponseWriter, r *http.Request) {
+	unanswered := GetUnAnswered()
+	unansweredJSON, err := json.Marshal(unanswered)
+	if err != nil {
+		log.Fatal("Cannot encode to JSON ", err)
+	}
+	err = ioutil.WriteFile("unanswered.json", unansweredJSON, 0644)
+	// fmt.Fprintf(os.Stdout, "%s", unansweredJSON)
+
+	// for i:=0; i< len(unanswered); i++ {
+	// var jsonBlob = []byte(unanswered[i])
+
+	// }
+	// err := ioutil.WriteFile("unanswered.json", []byte(unanswered), 0755)
+	// if err != nil {
+	// 	fmt.Printf("Unable to write file: %v", err)
+	// }
+	x := json.NewEncoder(w).Encode(unanswered)
+	fmt.Printf("%T", x)
+
+}
+func AddCustomerJSON(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var customer Customer
+	var customers []Customer
+	_ = json.NewDecoder(r.Body).Decode(&customer)
+	customers = append(customers, customer)
+	json.NewEncoder(w).Encode(customer)
+}
+
+func GetCustomersJSON(w http.ResponseWriter, r *http.Request) {
+	customers := GetCustomers()
+	// customersJson, err := json.Marshal(customers)
+	// if err != nil {
+	// 	log.Fatal("Cannot encode to JSON ", err)
+	// }
+	json.NewEncoder(w).Encode(customers)
 }

@@ -339,3 +339,32 @@ func GetCustomer(customerID int) Customer {
 	}
 	return customer
 }
+
+func GetUnAnswered() []Post {
+	var posts []Post
+	db := getConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where answer_count = 0")
+	if err != nil {
+		// handle this error better than this
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		post := Post{}
+		err = rows.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+		if err != nil {
+			// handle this error
+			panic(err)
+		}
+		posts = append(posts, post)
+	}
+	// get any error encountered during iteration
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	// fmt.Println("Posts in the database:", posts)
+	return posts
+}

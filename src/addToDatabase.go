@@ -146,7 +146,7 @@ func ValidateUsername(username string) bool {
 	return false
 }
 func ValidatePassword(password string) bool {
-	if len(password) > 8 {
+	if len(password) > 8 && len(password) < 10 {
 		return true
 	}
 	return false

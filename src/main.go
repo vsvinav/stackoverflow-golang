@@ -23,7 +23,7 @@ func main() {
 	// fmt.Println(GetPost(20))
 	// fmt.Println(getPost(posts[1].ID))
 	// fmt.Println(downvote(posts[1].ID))
-	AddCustomer(TakeCustomerInput())
-	// Api()
+	// AddCustomer(TakeCustomerInput())
+	Api()
 	// fmt.Println(getPosts())
 }
