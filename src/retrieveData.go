@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func getPosts() []Post {
+func GetPosts() []Post {
 	var posts []Post
 	db := getConnection()
 	defer db.Close()
@@ -34,7 +34,7 @@ func getPosts() []Post {
 	return posts
 }
 
-func getPost(postID int) Post {
+func GetPost(postID int) Post {
 	db := getConnection()
 	defer db.Close()
 
@@ -51,14 +51,34 @@ func getPost(postID int) Post {
 	default:
 		panic(err)
 	}
-	fmt.Printf("ID:%d", post.ID)
+	// fmt.Printf("Score:%d", post.Score)
+	return post
+}
+
+func GetPostForTest(postID int) Post {
+	db := getConnection()
+	defer db.Close()
+
+	var post Post
+	sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1`
+	row := db.QueryRow(sqlStatement, postID)
+	err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		return Post{}
+	case nil:
+		// fmt.Println(post)
+	default:
+		panic(err)
+	}
 	// fmt.Printf("Score:%d", post.Score)
 	return post
 }
 
 // ************* Get Comments for the post
 
-func getComments() []Comment {
+func GetComments() []Comment {
 	var comments []Comment
 	db := getConnection()
 	defer db.Close()
@@ -86,7 +106,7 @@ func getComments() []Comment {
 	return comments
 }
 
-func getComment(postID int) Comment {
+func GetComment(postID int) Comment {
 	db := getConnection()
 	defer db.Close()
 
@@ -108,7 +128,7 @@ func getComment(postID int) Comment {
 
 // ************* Get Answers for the post, sorting according to user's choice
 
-func getAnswers() []Post {
+func GetAnswers() []Post {
 	var posts []Post
 	db := getConnection()
 	defer db.Close()
@@ -137,7 +157,7 @@ func getAnswers() []Post {
 	return posts
 }
 
-func getAnswer(postID int, choice string) Post {
+func GetAnswer(postID int, choice string) Post {
 	db := getConnection()
 	defer db.Close()
 
@@ -202,7 +222,7 @@ func getAnswer(postID int, choice string) Post {
 }
 
 // ************* Get Users
-func getUsers() []User {
+func GetUsers() []User {
 	var users []User
 	db := getConnection()
 	defer db.Close()
@@ -230,7 +250,7 @@ func getUsers() []User {
 	return users
 }
 
-func getUser(userID int) User {
+func GetUser(userID int) User {
 	db := getConnection()
 	defer db.Close()
 
@@ -251,7 +271,7 @@ func getUser(userID int) User {
 }
 
 // ********** Get votes
-func getVotes(postID int) int {
+func GetVotes(postID int) int {
 	db := getConnection()
 	defer db.Close()
 
@@ -269,4 +289,53 @@ func getVotes(postID int) int {
 		panic(err)
 	}
 	return post.Score
+}
+
+// ******** Get customer
+func GetCustomers() []Customer {
+	var customers []Customer
+	db := getConnection()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM customer")
+	if err != nil {
+		// handle this error better than this
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		customer := Customer{}
+		err = rows.Scan(&customer.ID, &customer.username, &customer.password, &customer.email)
+		if err != nil {
+			// handle this error
+			panic(err)
+		}
+		customers = append(customers, customer)
+	}
+	// get any error encountered during iteration
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	return customers
+}
+
+func GetCustomer(customerID int) Customer {
+	db := getConnection()
+	defer db.Close()
+
+	var customer Customer
+	sqlStatement := `SELECT *  FROM customer where id = $1`
+	row := db.QueryRow(sqlStatement, customerID)
+	err := row.Scan(&customer.ID, &customer.username, &customer.password, &customer.email)
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		return Customer{}
+	case nil:
+		fmt.Println(customer)
+	default:
+		panic(err)
+	}
+	return customer
 }

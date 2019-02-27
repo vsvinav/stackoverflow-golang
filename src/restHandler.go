@@ -1,49 +1,48 @@
 package main
 
 import (
-	"crypto/subtle"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
-	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
 )
 
 func Api() {
 	router := mux.NewRouter()
 	// router.HandleFunc("/", PrintHello).Methods("GET")
-	router.HandleFunc("/posts", GetPosts).Methods("GET")
-	router.HandleFunc("/posts/{id}", GetPost).Methods("GET")
-	router.HandleFunc("/comments", GetComments).Methods("GET")
-	router.HandleFunc("/comments/{id}", GetComment).Methods("GET")
-	router.HandleFunc("/users", GetUsers).Methods("GET")
-	router.HandleFunc("/answers", GetAnswers).Methods("GET")
-	router.HandleFunc("/upvote/{id}", Upvote).Methods("PUT")
-	router.HandleFunc("/downvote/{id}", Downvote).Methods("PUT")
-	http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
-	// http.Handle("/", router)
+	router.HandleFunc("/posts", GetPostsJSON).Methods("GET")
+	router.HandleFunc("/posts/{id}", GetPostJSON).Methods("GET")
+	router.HandleFunc("/comments", GetCommentsJSON).Methods("GET")
+	router.HandleFunc("/comments/{id}", GetCommentJSON).Methods("GET")
+	router.HandleFunc("/users", GetUsersJSON).Methods("GET")
+	router.HandleFunc("/answers", GetAnswersJSON).Methods("GET")
+	router.HandleFunc("/upvote/{id}", UpvoteJSON).Methods("PUT")
+	router.HandleFunc("/downvote/{id}", DownvoteJSON).Methods("PUT")
+	// http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
+	http.Handle("/", router)
 
 	err := http.ListenAndServe(":8000", router)
 	if err != nil {
 		fmt.Print(err)
 	}
+	fmt.Println("listening on port 8000")
 }
 
 func PrintHello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello")
 }
 
-func GetPosts(w http.ResponseWriter, r *http.Request) {
-	posts := getPosts()
+func GetPostsJSON(w http.ResponseWriter, r *http.Request) {
+	posts := GetPosts()
 	json.NewEncoder(w).Encode(posts)
 }
-func GetComments(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(getComments())
+func GetCommentsJSON(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(GetComments())
 }
-func GetComment(w http.ResponseWriter, req *http.Request) {
-	comments := getComments()
+func GetCommentJSON(w http.ResponseWriter, req *http.Request) {
+	comments := GetComments()
 	params := mux.Vars(req)
 	id, err := strconv.Atoi(params["id"])
 
@@ -51,7 +50,7 @@ func GetComment(w http.ResponseWriter, req *http.Request) {
 		// handle error
 		fmt.Println(err)
 	}
-	// y := getComment(comments[id].PostID)
+	// y := GetComment(comments[id].PostID)
 	// json.NewEncoder(w).Encode(y)
 	for _, item := range comments {
 
@@ -63,22 +62,22 @@ func GetComment(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(getUsers())
+func GetUsersJSON(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(GetUsers())
 }
 
-func GetAnswers(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(getAnswers())
+func GetAnswersJSON(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(GetAnswers())
 }
 
-func GetPost(w http.ResponseWriter, req *http.Request) {
+func GetPostJSON(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		// handle error
 		fmt.Println(err)
 	}
-	post := getPost(id)
+	post := GetPost(id)
 	json.NewEncoder(w).Encode(post)
 	// for _, item := range posts {
 
@@ -92,7 +91,7 @@ func GetPost(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func Upvote(w http.ResponseWriter, req *http.Request) {
+func UpvoteJSON(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -100,11 +99,11 @@ func Upvote(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 	}
 	upvote(id)
-	post := getPost(id)
+	post := GetPost(id)
 	json.NewEncoder(w).Encode(post)
 
 }
-func Downvote(w http.ResponseWriter, req *http.Request) {
+func DownvoteJSON(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -112,24 +111,7 @@ func Downvote(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 	}
 	downvote(id)
-	post := getPost(id)
+	post := GetPost(id)
 	json.NewEncoder(w).Encode(post)
 
-}
-
-func BasicAuth(handler http.HandlerFunc, username, password, realm string) http.HandlerFunc {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		user, pass, ok := r.BasicAuth()
-
-		if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(username)) != 1 || subtle.ConstantTimeCompare([]byte(pass), []byte(password)) != 1 {
-			w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`"`)
-			w.WriteHeader(401)
-			w.Write([]byte("Unauthorised.\n"))
-			return
-		}
-
-		handler(w, r)
-	}
 }
