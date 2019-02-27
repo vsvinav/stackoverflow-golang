@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 )
 
 func addBadge(badge Badge) {
@@ -140,7 +139,7 @@ func takeCustomerInput() Customer {
 	fmt.Println("Enter id:")
 	fmt.Scan(&customer.ID)
 	fmt.Println("Enter username:")
-	var re = regexp.MustCompile(`(?m)^\w{5,}$`)
+	// var re = regexp.MustCompile(`(?m)^\w{5,}$`)
 
 	fmt.Scanln(&customer.username)
 	fmt.Println("Enter Password:")

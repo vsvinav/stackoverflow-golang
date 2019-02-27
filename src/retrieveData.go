@@ -39,9 +39,9 @@ func getPost(postID int) Post {
 	defer db.Close()
 
 	var post Post
-	sqlStatement := `SELECT  id, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1`
+	sqlStatement := `SELECT  id,score, view_count, answer_count, comment_count, view_count, favourite_count, closed_date, title FROM posts where id = $1`
 	row := db.QueryRow(sqlStatement, postID)
-	err := row.Scan(&post.ID, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
+	err := row.Scan(&post.ID, &post.Score, &post.ViewCount, &post.AnswerCount, &post.CommentCount, &post.ViewCount, &post.FavoriteCount, &post.ClosedDate, &post.Title)
 	switch err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
@@ -51,6 +51,8 @@ func getPost(postID int) Post {
 	default:
 		panic(err)
 	}
+	fmt.Printf("ID:%d", post.ID)
+	// fmt.Printf("Score:%d", post.Score)
 	return post
 }
 
@@ -246,4 +248,25 @@ func getUser(userID int) User {
 		panic(err)
 	}
 	return user
+}
+
+// ********** Get votes
+func getVotes(postID int) int {
+	db := getConnection()
+	defer db.Close()
+
+	var post Post
+	sqlStatement := `SELECT score from posts where id = $1`
+	row := db.QueryRow(sqlStatement, postID)
+	err := row.Scan(&post.Score)
+
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+	case nil:
+		// fmt.Println(post)
+	default:
+		panic(err)
+	}
+	return post.Score
 }
