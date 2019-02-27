@@ -61,5 +61,54 @@ func TestForGetPost(t *testing.T) {
 }
 
 func TestCustomerUserName(t *testing.T) {
-	var cust Customer = 
+	var cust Customer = Customer{ID: 12, Username: "test", Password: "1234556666666666", Email: "something"}
+
+	got := ValidateUsername(cust.Username)
+	expected := true
+	if got != expected {
+		fmt.Println("Test Passed")
+
+	} else {
+		t.Errorf("expected = %v; got = %v", expected, got)
+	}
+}
+
+func TestCustomerEmail(t *testing.T) {
+	var cust Customer = Customer{ID: 12, Username: "test", Password: "1234556666666666", Email: "something"}
+
+	got := ValidateEmail(cust.Email)
+	expected := true
+	if got != expected {
+		fmt.Println("Test Passed")
+
+	} else {
+		t.Errorf("expected = %v; got = %v", expected, got)
+	}
+}
+
+func TestCustomerPassword(t *testing.T) {
+	var cust Customer = Customer{ID: 12, Username: "test", Password: "1234556666666666", Email: "something"}
+
+	got := ValidatePassword(cust.Password)
+	expected := true
+	if got != expected {
+		fmt.Println("Test Passed")
+
+	} else {
+		t.Errorf("expected = %v; got = %v", expected, got)
+	}
+}
+
+func TestForGetComment(t *testing.T) {
+	comments := GetComments()
+	got := comments[1]
+	expected := GetComment(comments[1].PostID)
+	fmt.Println(got, expected)
+	if got == expected {
+		fmt.Println("Test Passed")
+
+	} else {
+		t.Errorf("expected = %v; got = %v", expected, got)
+	}
+
 }
