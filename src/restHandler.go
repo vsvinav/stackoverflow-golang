@@ -21,6 +21,8 @@ func Api() {
 	router.HandleFunc("/answers", GetAnswersJSON).Methods("GET")
 	router.HandleFunc("/upvote/{id}", UpvoteJSON).Methods("PUT")
 	router.HandleFunc("/downvote/{id}", DownvoteJSON).Methods("PUT")
+	router.HandleFunc("/unanswered", GetUnAnsweredJSON).Methods("GET")
+
 	http.Handle("/", httpauth.SimpleBasicAuth("someuser", "somepassword")(http.HandlerFunc(PrintHello))) // router.HandleFunc("/users/{id}", GetUser).Methods("GET")
 	// http.Handle("/", router)
 
@@ -30,6 +32,13 @@ func Api() {
 	}
 	fmt.Println("listening on port 8000")
 }
+
+// func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+// 	rr := httptest.NewRecorder()
+// 	router.ServeHTTP(rr, req)
+
+// 	return rr
+// }
 
 func PrintHello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello")
@@ -114,5 +123,11 @@ func DownvoteJSON(w http.ResponseWriter, req *http.Request) {
 	downvote(id)
 	post := GetPost(id)
 	json.NewEncoder(w).Encode(post)
+
+}
+
+func GetUnAnsweredJSON(w http.ResponseWriter, r *http.Request) {
+	unanswered := GetUnAnswered()
+	json.NewEncoder(w).Encode(unanswered)
 
 }
